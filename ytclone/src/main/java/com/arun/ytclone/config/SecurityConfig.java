@@ -29,7 +29,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         try {
-            System.out.println("Inside Filter Chain");
             http
                     .authorizeHttpRequests(authoriseRequests ->
                             authoriseRequests.anyRequest().authenticated())
@@ -45,7 +44,6 @@ public class SecurityConfig {
                                     .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
 
         } catch (Exception e) {
-            System.out.println("ERROR - Inside Filter Chain");
             throw new RuntimeException(e);
         }
 
@@ -55,9 +53,6 @@ public class SecurityConfig {
     @Bean
     @Primary
     public JwtDecoder jwtDecoder() {
-        System.out.println("Inside JWT Decoder");
-//        String jwkSetUri = "https://dev-8f2841v46pgbmzmn.us.auth0.com/.well-known/jwks.json";
-//        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
         NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuer);
 
         OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);
@@ -65,8 +60,6 @@ public class SecurityConfig {
         OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
 
         jwtDecoder.setJwtValidator(withAudience);
-        System.out.println("JWT Decoder" + jwtDecoder.toString());
         return  jwtDecoder;
     }
-
 }

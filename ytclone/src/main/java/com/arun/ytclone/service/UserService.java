@@ -1,0 +1,55 @@
+package com.arun.ytclone.service;
+
+import com.arun.ytclone.dto.UserInfoDto;
+import com.arun.ytclone.model.User;
+import com.arun.ytclone.repository.UserRepository;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+    @Value("${auth0.userinfoEndpoint}")
+    private String userInfoEndpoint;
+
+    private final UserRepository userRepository;
+
+    public void registerUser(String jwtTokenValue) {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(userInfoEndpoint))
+                .setHeader("Authorization", String.format("Bearer %s", jwtTokenValue))
+                .build();
+
+        HttpClient httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_2).build();
+
+        try {
+            HttpResponse<String> httpResponse = httpClient
+                    .send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            UserInfoDto userInfoDto = objectMapper.readValue(httpResponse.body(), UserInfoDto.class);
+
+            User user = new User();
+            user.setEmail(userInfoDto.getEmail());
+            user.setFirstName(userInfoDto.getGivenName());
+            user.setLastName(userInfoDto.getFamilyName());
+            user.setFullName(userInfoDto.getName());
+            userRepository.save(user);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("Error while registering user ", e);
+        }
+    }
+}

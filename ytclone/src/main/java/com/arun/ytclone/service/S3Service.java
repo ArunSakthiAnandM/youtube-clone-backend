@@ -21,7 +21,7 @@ public class S3Service implements FileService{
     @Autowired
     private AmazonS3 amazonS3;
 
-    @Value("project.ytclone")
+    @Value("{s3.bucket.name}")
     private static String s3BucketName;
 
     @Override
@@ -36,7 +36,7 @@ public class S3Service implements FileService{
         metadata.setContentType(file.getContentType());
 
         try {
-            PutObjectRequest putObjectRequest = new PutObjectRequest("project.ytclone", key, file.getInputStream(), metadata);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, key, file.getInputStream(), metadata);
             amazonS3.putObject(putObjectRequest);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Error occured while uploading the file to s3");

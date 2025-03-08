@@ -39,7 +39,6 @@ public class VideoController {
     @GetMapping("/{videoId}")
     @ResponseStatus(HttpStatus.OK)
     public Video videoDetails(@PathVariable String videoId) {
-        System.out.println("Inside Get Video Controller");
         return videoService.getVideoDetails(videoId);
     }
 }
