@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 //import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Document(value = "User")
 @Data
@@ -17,6 +18,8 @@ import java.util.Set;
 public class User {
     @Id
     private String id;
+
+    private String sub;
 
     private String firstName;
 
@@ -32,37 +35,23 @@ public class User {
 
     private Set<String> subscribedToUsers;
 
-    private Set<String> likedVideos;
+    private Set<String> likedVideos = ConcurrentHashMap.newKeySet();
 
-    private Set<String> disLikedVideos;
+    private Set<String> disLikedVideos = ConcurrentHashMap.newKeySet();
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return List.of();
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return "";
-//    }
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return UserDetails.super.isAccountNonExpired();
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return UserDetails.super.isAccountNonLocked();
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return UserDetails.super.isCredentialsNonExpired();
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return UserDetails.super.isEnabled();
-//    }
+    public void addToLikedVideos(String videoId) {
+        likedVideos.add(videoId);
+    }
+
+    public void removeFromLikedVideos(String videoId) {
+        likedVideos.remove(videoId);
+    }
+
+    public void addToDisLikedVideos(String videoId) {
+        disLikedVideos.add(videoId);
+    }
+
+    public void removeFromDisLikedVideos(String videoId) {
+        disLikedVideos.remove(videoId);
+    }
 }

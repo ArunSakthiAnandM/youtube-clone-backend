@@ -19,6 +19,9 @@ public class VideoService {
     @Autowired
     private final VideoRepository videoRepository;
 
+    @Autowired
+    private final UserService userService;
+
     public UploadVideoResponse uploadVideo(MultipartFile file) {
         String videoUrl = s3Service.uploadFile(file);
         Video video = new Video();
@@ -58,4 +61,41 @@ public class VideoService {
     public Video getVideoDetails(String videoId) {
         return getVideoById(videoId);
     }
+
+    public Video likeVideo(String videoId) {
+        Video video = getVideoById(videoId);
+        if (userService.ifVideoLiked(videoId)) {
+            video.decrementLikes();
+            userService.removeFromLikedVideos(videoId);
+        } else if (userService.ifVideoDisLiked(videoId)) {
+            video.decrementDisLikes();
+            video.incrementLikes();
+            userService.addToLikedVideos(videoId);
+            userService.removeFromDisLikedVideos(videoId);
+        } else {
+            video.incrementLikes();
+            userService.addToLikedVideos(videoId);
+        }
+        videoRepository.save(video);
+        return video;
+    }
+
+    public Video disLikeVideo(String videoId) {
+        Video video = getVideoById(videoId);
+        if (userService.ifVideoDisLiked(videoId)) {
+            video.decrementDisLikes();
+            userService.removeFromDisLikedVideos(videoId);
+        } else if (userService.ifVideoLiked(videoId)) {
+            video.decrementLikes();
+            video.incrementDisLikes();
+            userService.addToDisLikedVideos(videoId);
+            userService.removeFromLikedVideos(videoId);
+        } else {
+            video.incrementDisLikes();
+            userService.addToDisLikedVideos(videoId);
+        }
+        videoRepository.save(video);
+        return video;
+    }
+
 }
