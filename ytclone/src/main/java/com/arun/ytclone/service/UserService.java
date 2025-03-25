@@ -2,6 +2,7 @@ package com.arun.ytclone.service;
 
 import com.arun.ytclone.dto.UserInfoDto;
 import com.arun.ytclone.model.User;
+import com.arun.ytclone.model.Video;
 import com.arun.ytclone.repository.UserRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -94,6 +95,12 @@ public class UserService {
     public void removeFromDisLikedVideos(String videoId) {
         User user = getCurrentUser();
         user.removeFromDisLikedVideos(videoId);
+        userRepository.save(user);
+    }
+
+    public void addVideoToHistory(String id) {
+        User user = getCurrentUser();
+        user.addToVideoHistory(id);
         userRepository.save(user);
     }
 }

@@ -59,7 +59,15 @@ public class VideoService {
     }
 
     public Video getVideoDetails(String videoId) {
-        return getVideoById(videoId);
+        Video savedVideo = getVideoById(videoId);
+        increaseVideoViewCount(savedVideo);
+        userService.addVideoToHistory(savedVideo.getId());
+        return savedVideo;
+    }
+
+    private void increaseVideoViewCount(Video savedVideo) {
+        savedVideo.incrementViewCount();
+        videoRepository.save(savedVideo);
     }
 
     public Video likeVideo(String videoId) {

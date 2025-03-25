@@ -30,6 +30,8 @@ public class Video {
 
     private Integer views;
 
+    private AtomicInteger viewCount = new AtomicInteger(0);
+
     private AtomicInteger likes = new AtomicInteger(0);
 
     private AtomicInteger disLikes = new AtomicInteger(0);
@@ -54,5 +56,9 @@ public class Video {
 
     public void decrementDisLikes() {
         disLikes.decrementAndGet();
+    }
+
+    public void incrementViewCount() {
+        viewCount.incrementAndGet();
     }
 }
