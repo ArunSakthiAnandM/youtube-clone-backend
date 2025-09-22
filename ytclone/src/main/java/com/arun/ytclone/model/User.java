@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-//import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    @Id
+
     private String id;
 
     private String sub;
@@ -27,6 +25,7 @@ public class User {
 
     private String fullName;
 
+    @Id
     private String email;
 
     private String password;
