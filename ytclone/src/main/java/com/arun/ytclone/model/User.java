@@ -31,9 +31,9 @@ public class User {
 
     private String password;
 
-    private Set<String> subscribers;
+    private Set<String> subscribers = ConcurrentHashMap.newKeySet();
 
-    private Set<String> subscribedToUsers;
+    private Set<String> subscribedToUsers = ConcurrentHashMap.newKeySet();
 
     private Set<String> videoHistory = ConcurrentHashMap.newKeySet();
 
@@ -59,5 +59,21 @@ public class User {
 
     public void addToVideoHistory(String id) {
         videoHistory.add(id);
+    }
+
+    public void addToSubscribedToUser(String userId) {
+        subscribedToUsers.add(userId);
+    }
+
+    public void addToSubscribers(String id) {
+        subscribers.add(id);
+    }
+
+    public void removeFromSubscribedToUser(String userId) {
+        subscribedToUsers.remove(userId);
+    }
+
+    public void removeFromSubscribers(String id) {
+        subscribers.remove(id);
     }
 }
