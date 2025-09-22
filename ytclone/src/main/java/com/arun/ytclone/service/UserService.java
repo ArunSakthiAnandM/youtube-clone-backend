@@ -2,7 +2,6 @@ package com.arun.ytclone.service;
 
 import com.arun.ytclone.dto.UserInfoDto;
 import com.arun.ytclone.model.User;
-import com.arun.ytclone.model.Video;
 import com.arun.ytclone.repository.UserRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +15,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -87,20 +87,51 @@ public class UserService {
     }
 
     public void addToDisLikedVideos(String videoId) {
-        User user = getCurrentUser();
-        user.addToDisLikedVideos(videoId);
-        userRepository.save(user);
+        User currentUser = getCurrentUser();
+        currentUser.addToDisLikedVideos(videoId);
+        userRepository.save(currentUser);
     }
 
     public void removeFromDisLikedVideos(String videoId) {
-        User user = getCurrentUser();
-        user.removeFromDisLikedVideos(videoId);
-        userRepository.save(user);
+        User currentUser = getCurrentUser();
+        currentUser.removeFromDisLikedVideos(videoId);
+        userRepository.save(currentUser);
     }
 
     public void addVideoToHistory(String id) {
-        User user = getCurrentUser();
-        user.addToVideoHistory(id);
+        User currentUser = getCurrentUser();
+        currentUser.addToVideoHistory(id);
+        userRepository.save(currentUser);
+    }
+
+    public void subscribeUser(String userId) {
+        User currentUser = getCurrentUser();
+        currentUser.addToSubscribedToUser(userId);
+
+        User user = getUserById(userId);
+        user.addToSubscribers(currentUser.getId());
+
+        userRepository.save(currentUser);
         userRepository.save(user);
+    }
+
+    public void unsubscribeUser(String userId) {
+        User currentUser = getCurrentUser();
+        currentUser.removeFromSubscribedToUser(userId);
+
+        User user = getUserById(userId);
+        user.removeFromSubscribers(currentUser.getId());
+
+        userRepository.save(currentUser);
+        userRepository.save(user);
+    }
+
+    public Set<String> getUserHistory(String userId) {
+        return getUserById(userId).getVideoHistory();
+    }
+
+    private User getUserById(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(()->new IllegalArgumentException("Cannot find user with Id = "+userId));
     }
 }
