@@ -1,25 +1,23 @@
 package com.arun.ytclone.service;
 
+import com.arun.ytclone.dto.CommentDto;
 import com.arun.ytclone.dto.UploadVideoResponse;
 import com.arun.ytclone.dto.VideoDto;
+import com.arun.ytclone.model.Comment;
 import com.arun.ytclone.model.Video;
 import com.arun.ytclone.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class VideoService {
 
-    @Autowired
     private final S3Service s3Service;
-
-    @Autowired
     private final VideoRepository videoRepository;
-
-    @Autowired
     private final UserService userService;
 
     public UploadVideoResponse uploadVideo(MultipartFile file) {
@@ -106,4 +104,26 @@ public class VideoService {
         return video;
     }
 
+    public void addComment(String videoId, CommentDto commentDto) {
+        Video video = getVideoById(videoId);
+        Comment comment = new Comment();
+        comment.setText(commentDto.getText());
+        comment.setAuthorID(commentDto.getAuthorID());
+        video.addComment(comment);
+        videoRepository.save(video);
+    }
+
+    public List<CommentDto> getAllComments(String videoId) {
+        Video video = getVideoById(videoId);
+        List<Comment> commentList = video.getComments();
+        return commentList.stream().map(this::mapToComment).toList();
+    }
+
+    private CommentDto mapToComment(Comment comment) {
+        return new CommentDto(comment.getText(), comment.getAuthorID());
+    }
+
+    public List<Video> getAllVideos() {
+        return videoRepository.findAll().stream().toList();
+    }
 }
