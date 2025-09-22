@@ -1,5 +1,6 @@
 package com.arun.ytclone.controller;
 
+import com.arun.ytclone.dto.CommentDto;
 import com.arun.ytclone.dto.UploadVideoResponse;
 import com.arun.ytclone.dto.VideoDto;
 import com.arun.ytclone.model.Video;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/videos")
 @RequiredArgsConstructor
@@ -17,6 +20,12 @@ public class VideoController {
 
     @Autowired
     private final VideoService videoService;
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<Video> getAllVideos() {
+        return videoService.getAllVideos();
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -52,5 +61,18 @@ public class VideoController {
     @ResponseStatus(HttpStatus.OK)
     public Video disLikeVideo(@PathVariable String videoId) {
         return videoService.disLikeVideo(videoId);
+    }
+
+    @PostMapping("/{videoId}/comment")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean addComment(@PathVariable String videoId, @RequestBody CommentDto commentDto) {
+        videoService.addComment(videoId, commentDto);
+        return true;
+    }
+
+    @GetMapping("/{videoId}/comment")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CommentDto> getAllComments(@PathVariable String videoId) {
+        return videoService.getAllComments(videoId);
     }
 }
