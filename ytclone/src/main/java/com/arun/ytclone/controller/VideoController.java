@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VideoController {
 
-    @Autowired
     private final VideoService videoService;
 
     @GetMapping
