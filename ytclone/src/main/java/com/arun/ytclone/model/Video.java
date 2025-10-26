@@ -29,8 +29,6 @@ public class Video {
 
     private String thumbnailUrl;
 
-    private Integer views;
-
     private AtomicInteger viewCount = new AtomicInteger(0);
 
     private AtomicInteger likes = new AtomicInteger(0);
@@ -65,5 +63,10 @@ public class Video {
 
     public void addComment(Comment comment) {
         comments.add(comment);
+    }
+
+    // Getter for compatibility (returns int value from AtomicInteger)
+    public Integer getViews() {
+        return viewCount.get();
     }
 }

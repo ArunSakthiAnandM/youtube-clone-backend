@@ -53,7 +53,7 @@ public class VideoService {
 
     private Video getVideoById(String id) {
         return videoRepository.findById(id)
-                .orElseThrow( () -> new IllegalArgumentException("Cannot find video by ID - " + id));
+                .orElseThrow( () -> new com.arun.ytclone.exception.ResourceNotFoundException("Video not found with ID: " + id));
     }
 
     public Video getVideoDetails(String videoId) {

@@ -5,6 +5,7 @@ import com.arun.ytclone.dto.UploadVideoResponse;
 import com.arun.ytclone.dto.VideoDto;
 import com.arun.ytclone.model.Video;
 import com.arun.ytclone.service.VideoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class VideoController {
 
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.OK)
-    public Video editVideo(@RequestBody VideoDto videoDto) {
+    public Video editVideo(@Valid @RequestBody VideoDto videoDto) {
         return videoService.editVideo(videoDto);
     }
 
@@ -64,7 +65,7 @@ public class VideoController {
 
     @PostMapping("/{videoId}/comment")
     @ResponseStatus(HttpStatus.OK)
-    public boolean addComment(@PathVariable String videoId, @RequestBody CommentDto commentDto) {
+    public boolean addComment(@PathVariable String videoId, @Valid @RequestBody CommentDto commentDto) {
         videoService.addComment(videoId, commentDto);
         return true;
     }
